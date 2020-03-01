@@ -6,5 +6,12 @@ Mole Classifier Home
 
 {% block content %}
 <h1>Mole Classifier</h1>
-<p>text here bla</p>
+
+<form method="post" action="upload" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="myfile">
+    <button type="submit">Upload</button>
+</form>
+
+
 {% endblock %}
