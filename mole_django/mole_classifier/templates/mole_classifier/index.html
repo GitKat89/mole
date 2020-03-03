@@ -1,17 +1,56 @@
-{% extends 'mole_classifier/base.html' %}
+{% extends 'mole_classifier/base.html' %} {% block title %} Mole Classifier Home {% endblock %} {% block content %}
+<header class="text-center">
+    <h1 class="display-4">Mole Classifier</h1>
 
-{% block title %}
-Mole Classifier Home
-{% endblock %}
+</header>
+<div class="row py-4">
+    <div class="col-lg-6 mx-auto">
+        <form method="POST" class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm" action="analyse" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input id="uploadInput" class="form-control border-0" onchange="readURL(this);" type="file" name="myfile">
+            <button class="btn btn-light m-0 rounded-pill px-4" type="submit">Analyse</button>
 
-{% block content %}
-<h1>Mole Classifier</h1>
+        </form>
+        <!-- Uploaded image area-->
+        <p class="font-italic text-white text-center">The image uploaded will be rendered inside the box below.</p>
+        <div class="image-area mt-4">
+            <img id="imageResult" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block">
+        </div>
 
-<form method="post" action="upload" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="myfile">
-    <button type="submit">Upload</button>
-</form>
+    </div>
+</div>
+<script>
+    /*  ==========================================
+    SHOW UPLOADED IMAGE
+* ========================================== */
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
+            reader.onload = function (e) {
+                $('#imageResult')
+                    .attr('src', e.target.result);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 
-{% endblock %}
+    $(function () {
+        $('#uploadInput').on('change', function () {
+            readURL(input);
+        });
+    });
+
+    /*  ==========================================
+        SHOW UPLOADED IMAGE NAME
+    * ========================================== */
+    var input = document.getElementById('upload');
+    var infoArea = document.getElementById('upload-label');
+
+    input.addEventListener('change', showFileName);
+    function showFileName(event) {
+        var input = event.srcElement;
+        var fileName = input.files[0].name;
+        infoArea.textContent = 'File name: ' + fileName;
+    }
+</script> {% endblock %}

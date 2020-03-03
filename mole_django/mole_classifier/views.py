@@ -22,6 +22,7 @@ def upload(request):
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
         uploaded_file_url = fs.url(filename)
+        print("finished upload")
         
   
     return HttpResponseRedirect(reverse('index'))
