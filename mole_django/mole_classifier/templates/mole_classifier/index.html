@@ -5,14 +5,15 @@
 </header>
 <div class="row py-4">
     <div class="col-lg-6 mx-auto">
-        <form method="POST" class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm" action="analyse" enctype="multipart/form-data">
+        <form method="POST" class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm" action="{% url 'analyze' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <input id="uploadInput" class="form-control border-0" onchange="readURL(this);" type="file" name="myfile">
             <button class="btn btn-light m-0 rounded-pill px-4" type="submit">Analyse</button>
 
         </form>
         <!-- Uploaded image area-->
-        <p class="font-italic text-white text-center">The image uploaded will be rendered inside the box below.</p>
+        <p class="font-italic  text-center"> {{result}} The image uploaded will be rendered inside the box below.</p>
+        
         <div class="image-area mt-4">
             <img id="imageResult" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block">
         </div>
@@ -34,18 +35,25 @@
 
 </script>
 <script>
+/*AKIEC - Actinic Keratosis / Morbus Bowen / Intraepithelial Carcinoma
+BCC - Basal Cell Carcinoma
+BKL - Benign pigmented keratosis / Seborrheic Keratosis / Solar Lentigo
+DF - Dermatofibroma
+MEL - Melanoma
+NV - Nevus
+SCC - Squamous Cell Carcinoma
+VASC - Vascular Lesion (incl. Hemorrhage) */
 
-
-
+    var result = JSON.parse("{{result}}" ) ;
     var ctx = document.getElementById("myChart");
     var probabilityChart = new Chart(ctx, {
         type: 'bar',
         responsive: true,
         data: {
-            labels: ["akiec", "bcc", "bkl", "df", "mel", "nv", "scc", "vasc"],
+            labels: ["Actinic Keratosis", "Basal Cell Carcinoma", "Benign pigmented keratosis", "Dermatofibroma", "Melanoma", "Nevus", "Squamous Cell Carcinoma", "Vascular Lesion"],
             datasets: [{
                 label: 'Softmax',
-                data: [0, 0.3, 0.2, 0.5, 0, 0, 0, 0],
+                data: result,
                 borderWidth: 1
             }]
         },
