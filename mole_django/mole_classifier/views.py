@@ -1,9 +1,10 @@
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 import json
+
 #from .forms import UploadFileForm
 
 
@@ -16,7 +17,7 @@ def save_image(request):
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
         filename = fs.save(myfile.name, myfile)
-        uploaded_file_url = fs.url(filename)
+        #uploaded_file_url = fs.url(filename)
         print("finished upload")
 
 def analyze(request):
@@ -26,6 +27,7 @@ def analyze(request):
     # ml modell mit bild füttern
     # ergebnis berechnen und zurückliefern an index.html
     context = {"result": json.dumps([1, 0.3, 0.2, 0.5, 0, 0, 0, 0])}
+    #return redirect("/mole", context)
     return render(request, 'mole_classifier/index.html', context)
         
 
