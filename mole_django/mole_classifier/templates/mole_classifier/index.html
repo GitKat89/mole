@@ -16,13 +16,61 @@
         <div class="image-area mt-4">
             <img id="imageResult" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block">
         </div>
-
     </div>
 </div>
+<!-- diagram -->
+<div id="chartArea" class="col-sm-7" style="margin: auto;" align="center">
+    <div id="probabilities" class="chart-container" style="position: relative;">
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"         crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"         crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"         crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js">
+
+</script>
+<script>
+
+
+
+    var ctx = document.getElementById("myChart");
+    var probabilityChart = new Chart(ctx, {
+        type: 'bar',
+        responsive: true,
+        data: {
+            labels: ["akiec", "bcc", "bkl", "df", "mel", "nv", "scc", "vasc"],
+            datasets: [{
+                label: 'Softmax',
+                data: [0, 0.3, 0.2, 0.5, 0, 0, 0, 0],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            legend: {
+                display: true
+            }
+
+        }
+    });
+</script>
+
 <script>
     /*  ==========================================
     SHOW UPLOADED IMAGE
 * ========================================== */
+
+
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
@@ -34,16 +82,17 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-
-    $(function () {
-        $('#uploadInput').on('change', function () {
-            readURL(input);
+    /* IF BUTTON ANALYZED IS CLICKED ...
+        $(function () {
+            $('#uploadInput').on('change', function () {
+                readURL(input);
+            });
         });
-    });
-
+    */
     /*  ==========================================
         SHOW UPLOADED IMAGE NAME
     * ========================================== */
+    
     var input = document.getElementById('upload');
     var infoArea = document.getElementById('upload-label');
 
@@ -53,4 +102,5 @@
         var fileName = input.files[0].name;
         infoArea.textContent = 'File name: ' + fileName;
     }
+
 </script> {% endblock %}
