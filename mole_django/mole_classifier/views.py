@@ -25,7 +25,8 @@ def save_to_mongodb(request):
         print("finished fct save_to_mongodb")
 
 def index(request):
-    return render(request, 'mole_classifier/index.html')
+    form = UserInputForm()
+    return render(request, 'mole_classifier/index.html', {'form':form})
 
 def save_user_input(request):
     if request.method == 'POST' and request.FILES['myfile']:
