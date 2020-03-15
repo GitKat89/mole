@@ -5,15 +5,68 @@
 </header>
 <div class="row py-4">
     <div class="col-lg-6 mx-auto">
-        <form method="POST" class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm" action="{% url 'analyze' %}" enctype="multipart/form-data">
+            <!--div class="col-lg-6 mx-auto">
+                    <form method="POST" class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm" action="{% url 'analyze' %}" enctype="multipart/form-data"-->
+        <form method="POST" action="{% url 'analyze' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            <input id="uploadInput" class="form-control border-0" onchange="readURL(this);" type="file" name="myfile">
+            <div class="form-group">
+                <input id="uploadInput" class="form-control border-0" onchange="readURL(this);" type="file" name="myfile">
+            </div>
+            <div class="form-group">
+                <label for="your_age">Your Age: </label>
+                <input id="your_age" type="text" name="age_approx" class="form-control border-0" value="{{ age_approx }}">
+            </div>
+            <div class="form-group">
+                <label for="Localisation">Localisation: </label>
+                <input id="Localisation" type="text" name="anatom_site_general" class="form-control border-0" value="{{ anatom_site_general }}">
+            </div>
+            <div class="form-group">
+                <label for="sex">sex: </label>
+                <input id="sex" type="text" name="sex" class="form-control border-0" value="{{ sex }}">
+            </div>
             <button class="btn btn-light m-0 rounded-pill px-4" type="submit">Analyse</button>
 
         </form>
+        <!-- dropdown buttons-->
+
+        <div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Sex
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">female</a>
+                    <a class="dropdown-item" href="#">male</a>
+                    <a class="dropdown-item" href="#">other</a>
+
+                </div>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Localisation
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">lower extremity</a>
+                    <a class="dropdown-item" href="#">upper extremity</a>
+                    <a class="dropdown-item" href="#">head/neck</a>
+                    <a class="dropdown-item" href="#">torso</a>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Age
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </div>
+        </div>
         <!-- Uploaded image area-->
         <p class="font-italic  text-center"> The image uploaded will be rendered inside the box below.</p>
-        
+
         <div class="image-area mt-4">
             <img id="imageResult" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block">
         </div>
@@ -35,16 +88,16 @@
 
 </script>
 <script>
-/*AKIEC - Actinic Keratosis / Morbus Bowen / Intraepithelial Carcinoma
-BCC - Basal Cell Carcinoma
-BKL - Benign pigmented keratosis / Seborrheic Keratosis / Solar Lentigo
-DF - Dermatofibroma
-MEL - Melanoma
-NV - Nevus
-SCC - Squamous Cell Carcinoma
-VASC - Vascular Lesion (incl. Hemorrhage) */
+    /*AKIEC - Actinic Keratosis / Morbus Bowen / Intraepithelial Carcinoma
+    BCC - Basal Cell Carcinoma
+    BKL - Benign pigmented keratosis / Seborrheic Keratosis / Solar Lentigo
+    DF - Dermatofibroma
+    MEL - Melanoma
+    NV - Nevus
+    SCC - Squamous Cell Carcinoma
+    VASC - Vascular Lesion (incl. Hemorrhage) */
 
-    var result = JSON.parse("{{result}}" ) ;
+    var result = JSON.parse("{{result}}");
     var ctx = document.getElementById("myChart");
     var probabilityChart = new Chart(ctx, {
         type: 'bar',
@@ -70,6 +123,12 @@ VASC - Vascular Lesion (incl. Hemorrhage) */
             }
 
         }
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('.dropdown-toggle').dropdown();
     });
 </script>
 
@@ -100,7 +159,7 @@ VASC - Vascular Lesion (incl. Hemorrhage) */
     /*  ==========================================
         SHOW UPLOADED IMAGE NAME
     * ========================================== */
-    
+
     var input = document.getElementById('upload');
     var infoArea = document.getElementById('upload-label');
 
@@ -110,5 +169,7 @@ VASC - Vascular Lesion (incl. Hemorrhage) */
         var fileName = input.files[0].name;
         infoArea.textContent = 'File name: ' + fileName;
     }
+
+
 
 </script> {% endblock %}

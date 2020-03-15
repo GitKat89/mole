@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
+from .models import UserInput
 
 import pymongo
 #https://api.mongodb.com/python/current/tutorial.htmös
@@ -17,37 +18,33 @@ def save_to_mongodb(request):
         client = MongoClient('mongodb://localhost:27017/')
         db = client["images"]
         fs = gridfs.GridFS(db)
-        myfile = request.FILES['myfile']
-        fs.put(myfile)
+        myfile = request.FILES['myfile'] #läd Datei als bytearray
+        fs.put(myfile) #speichert bytearray in db
    
         print("finished fct save_to_mongodb")
-
-
-#from .forms import UploadFileForm
-
 
 def index(request):
     return render(request, 'mole_classifier/index.html')
 
-
-def save_image(request):
+def save_user_input(request):
     if request.method == 'POST' and request.FILES['myfile']:
-        myfile = request.FILES['myfile']
-        fs = FileSystemStorage()
-        filename = fs.save(myfile.name, myfile) #clears file from RAM ?
-        #uploaded_file_url = fs.url(filename)
-        print("finished upload")
+        userinput = UserInput(age_approx = "10-20", sex = "male", anatom_site_general = "torso", image_file=request.FILES['myfile'])  
+        userinput.save()
+
+def feed_ml():
+    # Ergebnis berechnen und zurückliefern an index.html
+    # TODO: mit Bild füttern und ML Modell aufrufen
+    # Dummy Ergebnis: 
+    context = {"result": json.dumps([1, 0.3, 0.2, 0.5, 0, 0, 0, 0])}
+    return context
 
 def analyze(request):
     """  action="{% url 'analyze' %}" sends a request with an image. dummy data 'context' is sent back to index.html  as a result"""
-    #speichert das Bild ins Dateisystem:
-    #save_image(request) #comment out, otherwise bytestream is not saved to mongo
-    #speichert in Mongo:
-    save_to_mongodb(request)
-    # ml modell mit bild füttern
-    # ergebnis berechnen und zurückliefern an index.html
-    context = {"result": json.dumps([1, 0.3, 0.2, 0.5, 0, 0, 0, 0])}
-    #return redirect("/mole", context)
+    #speichert das Bild sowie die Nutzereingaben in die Datenbank
+    save_user_input(request)
+
+    # ML Modell mit Bild füttern
+    context = feed_ml()
     return render(request, 'mole_classifier/index.html', context)
         
 
