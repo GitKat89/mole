@@ -9,9 +9,10 @@ import pymongo
 #https://api.mongodb.com/python/current/tutorial.htmös
 from pymongo import MongoClient
 import gridfs
-
-
 import json
+from .forms import UserInputForm
+
+
 
 def save_to_mongodb(request): 
     if request.method == 'POST' and request.FILES['myfile']:
@@ -28,8 +29,13 @@ def index(request):
 
 def save_user_input(request):
     if request.method == 'POST' and request.FILES['myfile']:
-        userinput = UserInput(age_approx = "10-20", sex = "male", anatom_site_general = "torso", image_file=request.FILES['myfile'])  
-        userinput.save()
+        form = UserInputForm(request.POST)
+        if form.is_valid():
+            sex = form.cleaned_data['sex']
+            age_approx = form.cleaned_data['age_approx']
+            anatom_site_general = form.cleaned_data['anatom_site_general']
+            userinput = UserInput(age_approx = age_approx, sex = sex, anatom_site_general = anatom_site_general, image_file=request.FILES['myfile'])  
+            userinput.save()
 
 def feed_ml():
     # Ergebnis berechnen und zurückliefern an index.html
