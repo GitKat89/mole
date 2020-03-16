@@ -12,66 +12,43 @@
             <div class="form-group">
                 <div class="form-group custom-file">
                     <input id="uploadInput" class="custom-file-input" onchange="readURL(this);" type="file" name="myfile">
-                    <label class="custom-file-label" for="uploadInput">Choose file for ...</label>
+                    <label class="custom-file-label" for="uploadInput">Choose image file for analysis ...</label>
                 </div>
             </div>
+            <!--
             <div class="form-group">
                 <label for="your_age">Your Age: </label>
-                <input id="your_age" type="text" name="age_approx" class="form-control border-0" value="{{ age_approx }}">
+                <input id="your_age" type="text" name="age_approx" class="form-control " value="{{ age_approx }}">
             </div>
             <div class="form-group">
                 <label for="Localisation">Localisation: </label>
-                <input id="Localisation" type="text" name="anatom_site_general" class="form-control border-0" value="{{ anatom_site_general }}">
+                <input id="Localisation" type="text" name="anatom_site_general" class="form-control " value="{{ anatom_site_general }}">
             </div>
-     
+            -->
             <select class="custom-select my-1 mr-sm-2" name="{{ form.sex.name }}">
                 <option selected disabled>Enter your gender</option>
                 {% for choice in form.sex.field.choices %}
                     <option value="{{ choice.0 }}">{{ choice.1 }}</option>
                 {% endfor %}
             </select>
+            <select class="custom-select my-1 mr-sm-2" name="{{ form.age_approx.name }}">
+                <option selected disabled>Enter your age</option>
+                {% for choice in form.age_approx.field.choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+            <select class="custom-select my-1 mr-sm-2" name="{{ form.anatom_site_general.name }}">
+                <option selected disabled>Enter your anatom_site_general</option>
+                {% for choice in form.anatom_site_general.field.choices %}
+                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
             <button class="btn btn-danger m-0 rounded-pill px-4" type="submit">Analyse</button>
 
         </form>
-        <!-- dropdown buttons-->
 
-        <div>
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Sex
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">female</a>
-                    <a class="dropdown-item" href="#">male</a>
-                    <a class="dropdown-item" href="#">other</a>
-
-                </div>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Localisation
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">lower extremity</a>
-                    <a class="dropdown-item" href="#">upper extremity</a>
-                    <a class="dropdown-item" href="#">head/neck</a>
-                    <a class="dropdown-item" href="#">torso</a>
-                </div>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Age
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </div>
-        </div>
         <!-- Uploaded image area-->
-        <p class="font-italic  text-center"> The image uploaded will be rendered inside the box below.</p>
+        <p class="font-italic  text-center"> The image uploaded will be rendered in the area below.</p>
 
         <div class="image-area mt-4">
             <img id="imageResult" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block">
