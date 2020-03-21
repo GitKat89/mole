@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo
+  web:
+    build: .
+    command: python mole_django/manage.py runserver 0.0.0.0:8000 --settings=mole_django.default_settings
+    volumes:
+      - .:/mole_django
+    ports:
+      - "8000:8000"
+    depends_on:
+      - migration
+      - mongo
+  migration:
+    build: .
+    command: python mole_django/manage.py migrate --fake-initial
+    volumes:
+      - .:/mole_django
+    depends_on:
+      - mongo
