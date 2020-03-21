@@ -15,7 +15,7 @@ services:
       - mongo
   migration:
     build: .
-    command: python mole_django/manage.py migrate --fake-initial
+    command: python mole_django/manage.py migrate --fake-initial --settings=mole_django.default_settings
     volumes:
       - .:/mole_django
     depends_on:
