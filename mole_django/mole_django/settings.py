@@ -74,15 +74,7 @@ WSGI_APPLICATION = 'mole_django.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-BASE_URL = 'mongodb://localhost:27017/'
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'mole',
-        'HOST': BASE_URL
-    }
-}
+BASE_URL = 'mongodb://mongo:27017/'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
