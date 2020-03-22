@@ -53,6 +53,6 @@ def analyze(request):
     # ML Modell mit Bild füttern
     context = feed_ml()
     return render(request, 'mole_classifier/index.html', context)
-        
 
-    
+def info(request):
+    return render(request, 'mole_classifier/info.html')
