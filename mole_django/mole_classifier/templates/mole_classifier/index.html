@@ -5,7 +5,7 @@
 </header>
 <div class="row py-4">
     <div class="col-lg-6 mx-auto">
-            <!--div class="col-lg-6 mx-auto">
+        <!--div class="col-lg-6 mx-auto">
                     <form method="POST" class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm" action="{% url 'analyze' %}" enctype="multipart/form-data"-->
         <form method="POST" action="{% url 'analyze' %}" enctype="multipart/form-data">
             {% csrf_token %}
@@ -28,22 +28,22 @@
             <select class="custom-select my-1 mr-sm-2" name="{{ form.sex.name }}">
                 <option selected disabled>Enter your gender</option>
                 {% for choice in form.sex.field.choices %}
-                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
                 {% endfor %}
             </select>
             <select class="custom-select my-1 mr-sm-2" name="{{ form.age_approx.name }}">
                 <option selected disabled>Enter your age</option>
                 {% for choice in form.age_approx.field.choices %}
-                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
                 {% endfor %}
             </select>
             <select class="custom-select my-1 mr-sm-2" name="{{ form.anatom_site_general.name }}">
-                <option selected disabled>Enter your anatom_site_general</option>
+                <option selected disabled>Enter the location of the examined mole </option>
                 {% for choice in form.anatom_site_general.field.choices %}
-                    <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
                 {% endfor %}
             </select>
-            <button class="btn btn-danger m-0 rounded-pill px-4" type="submit">Analyse</button>
+            <button class="btn btn-primary m-0 rounded-pill px-4" style="background-color: #2e5cb8;" type="submit">Analyse</button>
 
         </form>
 
