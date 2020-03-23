@@ -4,7 +4,7 @@ services:
   mongo:
     image: mongo
   web:
-    build: .
+    build: './mole_django'
     command: python mole_django/manage.py runserver 0.0.0.0:8000 --settings=mole_django.default_settings
     volumes:
       - .:/mole_django
@@ -14,7 +14,7 @@ services:
       - migration
       - mongo
   migration:
-    build: .
+    build: './mole_django'
     command: python mole_django/manage.py migrate --fake-initial --settings=mole_django.default_settings
     volumes:
       - .:/mole_django
