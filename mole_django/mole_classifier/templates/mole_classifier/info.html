@@ -1,0 +1,134 @@
+{% extends 'mole_classifier/base.html' %} {% block title %} Mole Classifier Info {% endblock %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Theme Made By www.w3schools.com - No Copyright -->
+    <title>Mole Classifier Info</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            font: 20px Montserrat, sans-serif;
+            line-height: 1.8;
+            color: #f5f6f7;
+        }
+
+        p {
+            font-size: 16px;
+        }
+
+        .margin {
+            margin-bottom: 45px;
+        }
+
+        .bg-1 {
+            background-color: #2e5cb8;
+            /* Green */
+            color: #ffffff;
+        }
+
+        .bg-2 {
+            background-color: #474e5d;
+            /* Dark Blue */
+            color: #ffffff;
+        }
+
+        .bg-3 {
+            background-color: #ffffff;
+            /* White */
+            color: #404040;
+        }
+
+        .container-fluid {
+            padding-top: 70px;
+            padding-bottom: 70px;
+        }
+
+        .navbar {
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border: 0;
+            border-radius: 0;
+            margin-bottom: 0;
+            font-size: 12px;
+            letter-spacing: 5px;
+        }
+
+        .navbar-nav li a:hover {
+            color: #1abc9c !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- First Container -->
+    <div class="container-fluid bg-1 text-center">
+        <h3 class="margin">What is a mole?</h3>
+
+        {% load static %}
+        <img src="{% static 'mole_image.png' %}" class="img-responsive img-circle margin" style="display:inline" alt="mole_image"
+            width="350" height="350">
+        <h3>Information about moles, melanomas and how they are classified</h3>
+    </div>
+
+    <!-- Mole Container -->
+    <div class="container-fluid bg-2 text-center">
+        <h3 class="margin">Moles</h3>
+        <p> Moles, liver spots, beauty patches or nevis are terms for visible, circumscribed, chronic lesions of the skin. The
+            vast majority of moles are harmless, but a small proportion are melanomas. Melanomas are malignant tumors, which
+            should be removed as early as possible. Most melanomas are newly emerging moles. Only 25% of melanomas originate
+            from older, originally harmless moles. In order to distinguish harmless moles from melanomas, dermatologists
+            perform skin cancer screenings.</p>
+    </div>
+
+    <!-- Skin Cancer Screening -->
+    <div class="container-fluid bg-2 text-center">
+        <h3 class="margin">Skin Cancer Screening</h3>
+        <p> In skin cancer screening, dermatologists try to distinguish benign from malignant moles.         They usually use dermatoscopes
+            to be able to recognize the structure of the moles more precisely. Dermatoscopes are optical devices that provide
+            optimal illumination and magnification. Often moles and melanomas cannot be clearly distinguished from each other,
+            so that a tissue removal with subsequent examination is carried out.
+            
+        </p>
+    </div>
+
+    <!-- Third Container (Grid) -->
+    <div class="container-fluid bg-3 text-center">
+        <h3 class="margin">Further Information</h3>
+        <br>
+        <div class="row">
+            <div class="col-sm-4">
+                <p>The mole classifier uses a convolutional neural network with the so-called ResNet50 architecture. The model was trained with labeled image data of the ISIC Challenge XXX (add link). The dataset consists of 2169 melanomas and 18,566 atypical nevi (as of 17 October 2018). By training with this data, the model has learned to distinguish and classify different characteristics of benign moles and melanomas.  </p>
+                <!--<img src="birds1.jpg" class="img-responsive margin" style="width:100%" alt="Image">-->
+            </div>
+            <div class="col-sm-4">
+                <p>  
+                    In a recent paper (add link), artificial neural networks outperform even chief  dermatologists. However, it must be mentioned that the dermatologists made the diagnosis on the basis of digital images. The images were taken with dermatoscopes that eliminate surface reflection. Uploading images of your moles taken with a smartphone or a camera will not reach the same performance as using images using dermatoscopes.
+                </p>
+                <!--<img src="birds2.jpg" class="img-responsive margin" style="width:100%" alt="Image">-->
+            </div>
+            <div class="col-sm-4">
+                <p>The network shows the result in a percentage probability distribution for the different classes. Together the respective probabilities always add up to 100 %. This means that the model also generates ( senseless ) results for uploaded images that do not contain a mole at all. Furthermore, the network is influenced by conspicuous areas outside the network. Therefore, uploaded images should preferably only show the birthmark and the surrounding skin area.
+                    
+                    
+                    <!--The results of the model relies to large parts on the used dataset. The labeling was done by histopathological examination, dermatologist consensus or no underlying temporal changes in the mole over a long periode of time. 
+                     Problems in diagnosis Anteil falsch positiver vs falsch negativ
+                        Befunde und übersehener Melanome von Hautärzten-->
+                </p>
+                <!--<img src="birds3.jpg" class="img-responsive margin" style="width:100%" alt="Image">-->
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+
+{% endblock %}
