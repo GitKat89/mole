@@ -3,9 +3,10 @@ from PIL import Image
 import os
 import scipy.misc
 import glob
+import sys
 
-read_directory = "/Users/deinemudda/Desktop/ML/mole/mole_ml/raw_data/ben/"
-save_directory = "/Users/deinemudda/Desktop/ML/mole/mole_ml/raw_data/ben_resized/"
+#read_directory = "/Users/deinemudda/Desktop/ML/mole/mole_ml/raw_data/ben/"
+#save_directory = "/Users/deinemudda/Desktop/ML/mole/mole_ml/raw_data/ben_resized/"
 
 #infilename = "/Users/deinemudda/Desktop/ML/mole/mole_ml/raw_data/ben/ISIC_0000020_downsampled.jpg"
 #outfilename = "./resized_image.jpg"
@@ -43,14 +44,22 @@ def save_resized_image(img, new_filename):
 # save result
 #save_image(result, outfilename)
 
-print("file executed")
 #for filepath in glob.iglob('read_directory/*.jpg'):
 #    print(filepath)
+def main(read_directory, save_directory):
+    for filename in os.listdir(read_directory):
+        if filename.endswith(".jpg") or filename.endswith(".jpeg"):
+            print("filename:   ", read_directory + filename)
+            loaded_image = load_image(read_directory + filename)
+            resized_image = resize_image(loaded_image)
+            save_resized_image(resized_image, save_directory + filename)
 
 
-for filename in os.listdir(read_directory):
-    if filename.endswith(".jpg") or filename.endswith(".jpeg"):
-        print("filename:   ", read_directory + filename)
-        loaded_image = load_image(read_directory + filename)
-        resized_image = resize_image(loaded_image)
-        save_resized_image(resized_image, save_directory + filename)
+if __name__ == '__main__':
+    read_directory = sys.argv[1]
+    print('read_directory:', read_directory)
+    
+    save_directory = sys.argv[2]
+    print('save_directory:', sys.argv[2])
+    main(read_directory, save_directory)
+
