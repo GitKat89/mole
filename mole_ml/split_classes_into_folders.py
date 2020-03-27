@@ -54,7 +54,7 @@ def main(input_dir, target_dir):
     ############## use df
     df = pd.read_csv(filename)#, header=None)
     df = df.drop(df.columns[[2, 3, 4, 5, 6, 7, 8, 9]], axis = 1)
-    df = df[:20] # for testing purposes with only 20 images
+    #df = df[:20] # for testing purposes with only 20 images
 
     df_train = df[df.index % 5 != 0]  # Excludes every 5th row starting from 0
     df_val = df[df.index % 5 == 0]
