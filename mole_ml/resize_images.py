@@ -52,7 +52,7 @@ def main(read_directory, save_directory):
             print("filename:   ", read_directory + filename)
             loaded_image = load_image(read_directory + filename)
             resized_image = resize_image(loaded_image)
-            save_resized_image(resized_image, save_directory + filename)
+            save_resized_image(resized_image, save_directory+ "/" + filename)
 
 
 if __name__ == '__main__':
