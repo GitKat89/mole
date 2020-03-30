@@ -30,10 +30,10 @@ def create_folder_structure(target_dir, dir_name):
     parent_dir = os.path.join(target_dir,dir_name)
     create_folder(parent_dir)
 
-    mel_ouput_dir = os.path.join(parent_dir, "mel")
+    mel_ouput_dir = os.path.join(parent_dir, "melanoma")
     create_folder(mel_ouput_dir)
     
-    ben_output_dir = os.path.join(parent_dir, "ben")
+    ben_output_dir = os.path.join(parent_dir, "benigne")
     create_folder(ben_output_dir)
 
     return mel_ouput_dir,ben_output_dir
@@ -62,7 +62,7 @@ def main(input_dir, target_dir):
     print(df.head())
 
     train_mel_dir, train_ben_dir = create_folder_structure(target_dir, "train")
-    val_mel_dir, val_ben_dir = create_folder_structure(target_dir, "val")
+    val_mel_dir, val_ben_dir = create_folder_structure(target_dir, "valid")
 
     move_images(df_train, input_dir, train_mel_dir, train_ben_dir)
     move_images(df_val, input_dir, val_mel_dir, val_ben_dir)
@@ -75,7 +75,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Check for --width
     if args.input_dir and args.output_dir:
         import os
         if not os.path.exists(args.input_dir):
@@ -86,4 +85,3 @@ if __name__ == "__main__":
             sys.exit(1)
         main(args.input_dir, args.output_dir)
 
-# check size == 1024 x 1024 ?
