@@ -16,10 +16,14 @@ SIZE = (1024, 1024)
 #n_epochs = 2 #1000
 
 if __name__ == "__main__":
+
+
+
     parser = argparse.ArgumentParser(description='Set arguments')
     parser.add_argument("--datapath", "-d", help="", type=str, default= '../data/')
     parser.add_argument("--batchsize", "-b", help="", type=int, default = 2)
     parser.add_argument("--epochs", "-e", help="", type=int, default = 2)
+    parser.add_argument("--cores", "-c", help="", type=str, default = '1')
 
     args = parser.parse_args()
     print("args: ", args)
@@ -28,6 +32,10 @@ if __name__ == "__main__":
     BATCH_SIZE = args.batchsize
     n_epochs = args.epochs
 
+    os.environ['MKL_NUM_THREADS'] = args.cores
+    os.environ['GOTO_NUM_THREADS'] = args.cores
+    os.environ['OMP_NUM_THREADS'] = args.cores
+    os.environ['openmp'] = 'True'
 
     TRAIN_DIR = os.path.join(DATA_DIR, 'train')
     VALID_DIR = os.path.join(DATA_DIR, 'valid')
