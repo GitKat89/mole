@@ -8,15 +8,32 @@ from keras.optimizers import Adam
 from keras.preprocessing import image
 from keras.models import load_model
 from keras.layers import Flatten
+import argparse
 
-DATA_DIR = '../data/'
-TRAIN_DIR = os.path.join(DATA_DIR, 'train')
-VALID_DIR = os.path.join(DATA_DIR, 'valid')
+#DATA_DIR = '../data/'
 SIZE = (1024, 1024)
-BATCH_SIZE = 2
-n_epochs = 2 #1000
+#BATCH_SIZE = 2
+#n_epochs = 2 #1000
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Set arguments')
+    parser.add_argument("--datapath", "-d", help="", type=str, default= '../data/')
+    parser.add_argument("--batchsize", "-b", help="", type=int, default = 2)
+    parser.add_argument("--epochs", "-e", help="", type=int, default = 2)
+
+    args = parser.parse_args()
+    print("args: ", args)
+
+    DATA_DIR =args.datapath
+    BATCH_SIZE = args.batchsize
+    n_epochs = args.epochs
+
+
+    TRAIN_DIR = os.path.join(DATA_DIR, 'train')
+    VALID_DIR = os.path.join(DATA_DIR, 'valid')
+
+
+
     num_train_samples = sum([len(files) for r, d, files in os.walk(TRAIN_DIR)])
     num_valid_samples = sum([len(files) for r, d, files in os.walk(VALID_DIR)])
 
