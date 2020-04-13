@@ -4,15 +4,22 @@ import numpy as np
 
 from keras import backend as K
 from keras.applications.imagenet_utils import preprocess_input
+from keras.applications.resnet50 import preprocess_input, decode_predictions
 from keras.models import load_model
 from keras.preprocessing import image
 
+import resize_images
 
-def predict(img_path, model):
-    img = image.load_img(img_path, target_size=(224, 224))
-    x = image.img_to_array(img)
-    x = np.expand_dims(x, axis=0)
+
+def predict(resized_img, model):
+    #img = image.load_img(img_path, target_size=(224, 224))
+    #x = image.img_to_array(img)
+    print("shape of loaded image before resize: ", resized_img.shape)
+    x = np.expand_dims(resized_img, axis=0)
+    print("shape of loaded image after resize: ", x.shape)
+
     preds = model.predict(x)
+    print("preds: ", preds)
     return preds
 
 if __name__ == '__main__':
@@ -25,4 +32,8 @@ if __name__ == '__main__':
 
     test_path = sys.argv[2]
     print('Generating predictions on image:', sys.argv[2])
-    preds = predict(sys.argv[2], model)
+    loaded_image = resize_images.load_image(sys.argv[2])
+    resized_img = resize_images.resize_image(loaded_image)
+    preds = predict(resized_img, model)
+    # decode the results into a list of tuples (class, description, probability)
+    #print('Predicted:', decode_predictions(preds, top=2)[0])
