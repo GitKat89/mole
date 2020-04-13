@@ -83,4 +83,4 @@ if __name__ == "__main__":
     finetuned_model.save('resnet50_final.h5')
 
     with open('file.json', 'w') as f:
-        json.dump(history.history, f)
+        json.dump(str(history.history), f)
