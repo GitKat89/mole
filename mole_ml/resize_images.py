@@ -4,6 +4,11 @@ import os
 import scipy.misc
 import glob
 import sys
+import cv2
+
+
+from PIL import Image
+import argparse
 
 #read_directory = "/Users/deinemudda/Desktop/ML/mole/mole_ml/raw_data/ben/"
 #save_directory = "/Users/deinemudda/Desktop/ML/mole/mole_ml/raw_data/ben_resized/"
@@ -23,7 +28,7 @@ def save_image( npdata, outfilename ) :
     # read image
     #img = load_image(infilename)
 
-def resize_image(img):
+def make_images_squared(img):
     ht, wd, cc= img.shape
     # create new image of desired size and color (blue) for padding
     ww = 1024
@@ -39,27 +44,46 @@ def resize_image(img):
     result[yy:yy+ht, xx:xx+wd] = img
     return result
 
-def save_resized_image(img, new_filename):
-    scipy.misc.toimage(img, cmin=0.0, cmax=...).save(new_filename)
-# save result
-#save_image(result, outfilename)
+def create_folder(folder):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
 
-#for filepath in glob.iglob('read_directory/*.jpg'):
-#    print(filepath)
-def main(read_directory, save_directory):
+def save_resized_image(img, new_filename, size):
+    img_res = cv2.resize(img, dsize=size)
+    cv2.imwrite(new_filename, cv2.cvtColor(img_res, cv2.COLOR_RGB2BGR))
+
+def main(read_directory, save_directory, make_squared, size):
+
+    create_folder(save_directory)
+
     for filename in os.listdir(read_directory):
         if filename.endswith(".jpg") or filename.endswith(".jpeg"):
-            print("filename:   ", read_directory + filename)
-            loaded_image = load_image(read_directory + filename)
-            resized_image = resize_image(loaded_image)
-            save_resized_image(resized_image, save_directory+ "/" + filename)
-
+            image = load_image(os.path.join(read_directory, filename))
+            if make_images_squared:
+                image = make_images_squared(image)
+            save_resized_image(image, os.path.join(save_directory, filename), size)
 
 if __name__ == '__main__':
-    read_directory = sys.argv[1]
+
+    parser = argparse.ArgumentParser(description='Set arguments')
+    parser.add_argument("--read_directory", "-rd", help="", type=str)
+    parser.add_argument("--save_directory", "-sd", help="", type=str)
+    parser.add_argument("--make_squared", "-sq", help="if True: The images are first squared and then resized", type=bool, default = False)
+    parser.add_argument("--size", "-s", help="", type=tuple, default = (224,224))
+   
+    args = parser.parse_args()
+
+    read_directory = args.read_directory
     print('read_directory:', read_directory)
     
-    save_directory = sys.argv[2]
-    print('save_directory:', sys.argv[2])
-    main(read_directory, save_directory)
+    save_directory = args.save_directory
+    print('save_directory:', save_directory)
+
+    make_squared = args.make_squared
+    print('make_squared:', make_squared)
+
+    size = args.size
+    print('size:', size)
+
+    main(read_directory, save_directory, make_squared, size)
 
