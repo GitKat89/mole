@@ -129,7 +129,7 @@ def create_model(dim_x, dim_y, lr):
                     classes=2)
 
     model.compile(optimizer = Adam(lr) ,
-                loss = "binary_crossentropy", 
+                loss = "categorical_crossentropy", 
                 metrics=["accuracy"])
     
     model.summary()
@@ -177,7 +177,7 @@ def main(train_dir, val_dir, epochs, batch_size):
         classes[train_batches.class_indices[c]] = c
     model.classes = classes
 
-    history = model.fit_generator(train_batches, steps_per_epoch=num_train_steps, epochs=n_epochs, callbacks=[early_stopping, checkpointer], validation_data=val_batches, validation_steps=num_valid_steps)
+    history = model.fit_generator(train_batches, steps_per_epoch=num_train_steps, epochs=epochs, callbacks=[early_stopping, checkpointer], validation_data=val_batches, validation_steps=num_valid_steps)
 
     model.save('output/resnet50_224.h5')
 
@@ -205,8 +205,7 @@ if __name__ == "__main__":
     #os.environ['openmp'] = 'True'
 
     train_dir = os.path.join(data_dir, 'train')
-    #valid_dir = os.path.join(data_dir, 'valid')
-    valid_dir = train_dir
+    valid_dir = os.path.join(data_dir, 'valid')
     create_folder('output')
 
     main(train_dir, valid_dir, n_epochs, batch_size)
