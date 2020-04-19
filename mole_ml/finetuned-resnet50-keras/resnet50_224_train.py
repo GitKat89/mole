@@ -23,6 +23,7 @@ from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
 from keras.wrappers.scikit_learn import KerasClassifier
 from keras.applications.resnet50 import ResNet50
 from keras import backend as K
+import tensorflow as tf
 
 import argparse
 
@@ -190,7 +191,7 @@ if __name__ == "__main__":
     parser.add_argument("--datapath", "-d", help="", type=str, default= '../data/')
     parser.add_argument("--batchsize", "-b", help="", type=int, default = 2)
     parser.add_argument("--epochs", "-e", help="", type=int, default = 2)
-    #parser.add_argument("--cores", "-c", help="", type=str, default = '1')
+    parser.add_argument("--cores", "-c", help="", type=str, default = '1')
 
     args = parser.parse_args()
     print("args: ", args)
@@ -199,10 +200,9 @@ if __name__ == "__main__":
     batch_size = args.batchsize
     n_epochs = args.epochs
 
-    #os.environ['MKL_NUM_THREADS'] = args.cores
-    #os.environ['GOTO_NUM_THREADS'] = args.cores
-    #os.environ['OMP_NUM_THREADS'] = args.cores
-    #os.environ['openmp'] = 'True'
+    with tf.Session(config=tf.ConfigProto(
+                    intra_op_parallelism_threads=args.cores)) as sess:
+        K.set_session(sess)
 
     train_dir = os.path.join(data_dir, 'train')
     valid_dir = os.path.join(data_dir, 'valid')
