@@ -81,7 +81,8 @@ if __name__ == "__main__":
             print("Input folder does not exist" + args.input_dir)
             sys.exit(1)
         if not os.path.exists(args.output_dir):
-            print("Output folder does not exist: " + args.output_dir)
-            sys.exit(1)
+            print("Output folder does not exist and will be created under: " + args.output_dir)
+            create_folder(args.output_dir)
+ 
         main(args.input_dir, args.output_dir)
 

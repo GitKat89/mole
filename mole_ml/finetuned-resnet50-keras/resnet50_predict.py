@@ -9,7 +9,7 @@ from keras.applications.resnet50 import preprocess_input, decode_predictions
 from keras.models import load_model
 from keras.preprocessing import image
 
-import resize_images
+
 
 def predict(resized_img, model):
     #img = image.load_img(img_path, target_size=(224, 224))
@@ -23,7 +23,7 @@ def predict(resized_img, model):
 
 def get_image(path):
     img = cv2.imread(path)
-    img = cv2.resize(img, (300, 300))
+    img = cv2.resize(img, (223, 224))
     img.astype(np.float32)
     img = img / 255.0
     return img

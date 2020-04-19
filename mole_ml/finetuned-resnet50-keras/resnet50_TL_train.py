@@ -15,6 +15,9 @@ from keras import optimizers
 
 import argparse
 
+def create_folder(folder):
+    if not os.path.exists(folder):
+        os.makedirs(folder)
 
 def create_model(input_shape):
     resnet = ResNet50(include_top=False, weights='imagenet', input_shape=input_shape)
@@ -42,10 +45,10 @@ def create_model(input_shape):
 
 
 def main(train_dir, val_dir, epochs, batch_size, cores):
-
-    DIM_X = 300
-    DIM_Y = 300
+    DIM_X = 224
+    DIM_Y = 224
     SHAPE = (DIM_X,DIM_Y,3)
+
     num_train_samples = sum([len(files) for r, d, files in os.walk(train_dir)])
     num_valid_samples = sum([len(files) for r, d, files in os.walk(val_dir)])
 
@@ -61,7 +64,8 @@ def main(train_dir, val_dir, epochs, batch_size, cores):
     model = create_model((DIM_X,DIM_Y,3))
 
     early_stopping = EarlyStopping(patience=10)
-    checkpointer = ModelCheckpoint('resnet50_best.h5', verbose=1, save_best_only=True)
+
+    checkpointer = ModelCheckpoint('output/resnet50_1024_TL_best.h5', verbose=1, save_best_only=True)
     
     classes = list(iter(train_batches.class_indices))
 
@@ -73,14 +77,15 @@ def main(train_dir, val_dir, epochs, batch_size, cores):
     print("Encoded model classes: " + str(model.classes))
 
     history = model.fit_generator(train_batches, steps_per_epoch=num_train_steps, epochs=n_epochs, callbacks=[early_stopping, checkpointer], validation_data=val_batches, validation_steps=num_valid_steps)
-    model.save('resnet50_draft.h5')
+
+    model.save('resnet50_1024_TL.h5')
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Set arguments')
     parser.add_argument("--datapath", "-d", help="", type=str, default= '../data/')
     parser.add_argument("--batchsize", "-b", help="", type=int, default = 2)
     parser.add_argument("--epochs", "-e", help="", type=int, default = 2)
-    parser.add_argument("--cores", "-c", help="", type=str, default = '1')
+    parser.add_argument("--cores", "-c", help="", type=str, default = '2')
 
     args = parser.parse_args()
     print("args: ", args)
@@ -96,6 +101,8 @@ if __name__ == "__main__":
 
     TRAIN_DIR = os.path.join(DATA_DIR, 'train')
     VALID_DIR = os.path.join(DATA_DIR, 'valid')
+
+    create_folder('output')
 
     main(TRAIN_DIR, VALID_DIR, n_epochs, BATCH_SIZE, DATA_DIR, args.cores)
 

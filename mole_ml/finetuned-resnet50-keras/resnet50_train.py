@@ -40,8 +40,6 @@ if __name__ == "__main__":
     TRAIN_DIR = os.path.join(DATA_DIR, 'train')
     VALID_DIR = os.path.join(DATA_DIR, 'valid')
 
-
-
     num_train_samples = sum([len(files) for r, d, files in os.walk(TRAIN_DIR)])
     num_valid_samples = sum([len(files) for r, d, files in os.walk(VALID_DIR)])
 
@@ -51,11 +49,11 @@ if __name__ == "__main__":
     gen = keras.preprocessing.image.ImageDataGenerator()
     val_gen = keras.preprocessing.image.ImageDataGenerator(horizontal_flip=True, vertical_flip=True)
 
-    batches = gen.flow_from_directory(TRAIN_DIR, target_size=SIZE, class_mode='binary', shuffle=True, batch_size=BATCH_SIZE)
-    val_batches = val_gen.flow_from_directory(VALID_DIR, target_size=SIZE, class_mode='binary', shuffle=True, batch_size=BATCH_SIZE)
+    batches = gen.flow_from_directory(TRAIN_DIR, target_size=SIZE, class_mode='categorical', shuffle=True, batch_size=BATCH_SIZE)
+    val_batches = val_gen.flow_from_directory(VALID_DIR, target_size=SIZE, class_mode='categorical', shuffle=True, batch_size=BATCH_SIZE)
 
-    #model = keras.applications.resnet50.ResNet50(include_top=False, input_shape=(1024,1024,3), classes=2) #downloads pretrained Model-->  
-    #model.save('resnet50_pretrained_includeTopFalse.h5')
+    model = keras.applications.resnet50.ResNet50(include_top=False, input_shape=(1024,1024,3)) #downloads pretrained Model-->  
+    model.save('resnet50_pretrained_includeTopFalse.h5')
     model = load_model('resnet50_pretrained_includeTopFalse.h5') 
     
     classes = list(iter(batches.class_indices))
@@ -68,10 +66,11 @@ if __name__ == "__main__":
     flattened = Flatten()(last)
     #x = Dense(len(classes), activation="softmax")(flattened)
   
-    x = Dense(1, activation="sigmoid")(flattened)
+    x = Dense(1, activation="softmax")(flattened)
     finetuned_model = Model(model.input, x)
     finetuned_model.compile(optimizer=Adam(lr=0.0001), loss='binary_crossentropy', metrics=['binary_accuracy'])
     for c in batches.class_indices:
+        print("Class indices: " + str(c))
         classes[batches.class_indices[c]] = c
     finetuned_model.classes = classes
 
