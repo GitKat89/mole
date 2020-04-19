@@ -191,7 +191,6 @@ if __name__ == "__main__":
     parser.add_argument("--datapath", "-d", help="", type=str, default= '../data/')
     parser.add_argument("--batchsize", "-b", help="", type=int, default = 2)
     parser.add_argument("--epochs", "-e", help="", type=int, default = 2)
-    parser.add_argument("--cores", "-c", help="", type=str, default = '1')
 
     args = parser.parse_args()
     print("args: ", args)
@@ -200,9 +199,7 @@ if __name__ == "__main__":
     batch_size = args.batchsize
     n_epochs = args.epochs
 
-    with tf.Session(config=tf.ConfigProto(
-                    intra_op_parallelism_threads=args.cores)) as sess:
-        K.set_session(sess)
+ 
 
     train_dir = os.path.join(data_dir, 'train')
     valid_dir = os.path.join(data_dir, 'valid')
