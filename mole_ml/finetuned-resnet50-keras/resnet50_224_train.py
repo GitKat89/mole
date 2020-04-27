@@ -22,14 +22,13 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
 from keras.wrappers.scikit_learn import KerasClassifier
 from keras.applications.resnet50 import ResNet50
+from keras import optimizers
 from keras import backend as K
+from keras.models import load_model
 import tensorflow as tf
+import cv2
 
 import argparse
-
-def resize_images():
-    #tbd
-    pass
 
 def create_folder(folder):
     if not os.path.exists(folder):
@@ -117,7 +116,6 @@ def plot(history):
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig('output/history_loss.png')
-    
 
 def create_model(dim_x, dim_y, lr):
     input_shape = (dim_x,dim_y,3)
@@ -136,16 +134,79 @@ def create_model(dim_x, dim_y, lr):
     model.summary()
     return model
 
-def evaluate_model():
-    #tbd
-    pass
+def create_model_tl(dim_x, dim_y, lr):
+    input_shape = (dim_x,dim_y,3)
 
-def main(train_dir, val_dir, epochs, batch_size):
-    dim_x = 224
-    dim_y = 224
-    lr = 1e-5
-    patience = 10
-   
+    resnet = ResNet50(include_top=False, weights='imagenet', input_shape=input_shape)
+
+    output_layer = resnet.layers[-1].output
+    output_layer = keras.layers.Flatten()(output_layer)
+
+    resnet = Model(resnet.input, output=output_layer)
+
+    #for layer in resnet.layers:
+    #    layer.trainable = False
+    
+    model.layers[0].trainable = False
+
+    model = Sequential()
+    model.add(resnet)
+  
+    model.add(Dense(1, activation='softmax', name="output"))
+    sgd = optimizers.SGD(lr = 0.01, decay = 1e-6, momentum = 0.9, nesterov = True)
+    model.compile(loss='categorical_crossentropy', optimizer=sgd,metrics=['accuracy'])
+
+    model.summary()
+    return model
+
+def test(data_dir, dim_x,dim_y):
+    test_dir = os.path.join(data_dir, 'test')
+    batch_size_test = 1
+    test_gen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+    test_batches = test_gen.flow_from_directory(directory = test_dir, target_size = (dim_x, dim_y),
+        batch_size = batch_size_test,
+        class_mode = None,
+        shuffle = False,
+        seed = 123
+    )
+
+    model = load_model('output/resnet50_224_best.h5')
+
+    test_batches.reset()
+
+    pred = model.predict_generator(test_batches, steps = len(test_batches), verbose = 1)
+
+    print("Predictions: " , str(pred))
+
+    predicted_class_indices = np.argmax(pred, axis = 1)
+
+    print("Predicted class indices: ", str(predicted_class_indices))
+
+    f, ax = plt.subplots(5, 5, figsize = (15, 15))
+
+    for i in range(0,25):
+        imgBGR = cv2.imread(os.path.join(test_dir, test_batches.filenames[i]))
+        
+        imgRGB = cv2.cvtColor(imgBGR, cv2.COLOR_BGR2RGB)
+        # a if condition else b
+        predicted_class = "Dog" if predicted_class_indices[i] else "Cat"
+
+        ax[i//5, i%5].imshow(imgRGB)
+        ax[i//5, i%5].axis('off')
+        ax[i//5, i%5].set_title("Predicted:{}".format(predicted_class))   
+
+    plt.savefig('predictions.png')
+
+
+def train(data_dir, epochs, batch_size, dim_x, dim_y, lr):
+
+    train_dir = os.path.join(data_dir, 'train')
+    val_dir = os.path.join(data_dir, 'valid')
+
+    create_folder('output')
+
+    patience = 5
+
     num_train_samples = sum([len(files) for r, d, files in os.walk(train_dir)])
     num_valid_samples = sum([len(files) for r, d, files in os.walk(val_dir)])
 
@@ -158,31 +219,33 @@ def main(train_dir, val_dir, epochs, batch_size):
     train_batches = train_gen.flow_from_directory(train_dir,target_size=(dim_x, dim_y),batch_size=batch_size, class_mode='categorical')
     val_batches = val_gen.flow_from_directory(val_dir, target_size=(dim_x, dim_y) , batch_size=batch_size, class_mode='categorical')
 
-    model = create_model(dim_x, dim_y, lr) # add parameters
+    model = create_model(dim_x, dim_y, lr)
 
     # Set a learning rate annealer
     learning_rate_reduction = ReduceLROnPlateau(monitor='val_accuracy', 
-                                            patience=5, 
+                                            patience=patience, 
                                             verbose=1, 
                                             factor=0.5, 
                                             min_lr=lr)
-
 
     early_stopping = EarlyStopping(patience=patience)
     checkpointer = ModelCheckpoint('output/resnet50_224_best.h5', verbose=1, save_best_only=True)
 
     classes = list(iter(train_batches.class_indices))
 
-    for c in train_batches.class_indices:
-        print("Class indices: " + str(c))
-        classes[train_batches.class_indices[c]] = c
-    model.classes = classes
+    #for c in train_batches.class_indices:
+    #    print("Class indices: " + str(c))
+    #    classes[train_batches.class_indices[c]] = c
+    #model.classes = classes
 
     history = model.fit_generator(train_batches, steps_per_epoch=num_train_steps, epochs=epochs, callbacks=[early_stopping, checkpointer], validation_data=val_batches, validation_steps=num_valid_steps)
+
+    model.load_weights("output/resnet50_224_best.h5")
 
     model.save('output/resnet50_224.h5')
 
     plot(history)
+
 
 
 if __name__ == "__main__":
@@ -197,14 +260,17 @@ if __name__ == "__main__":
 
     data_dir = args.datapath
     batch_size = args.batchsize
-    n_epochs = args.epochs
-
+    epochs = args.epochs
+    dim_x = 224
+    dim_y = 224
+    lr = 1e-5
  
-
     train_dir = os.path.join(data_dir, 'train')
     valid_dir = os.path.join(data_dir, 'valid')
     create_folder('output')
 
-    main(train_dir, valid_dir, n_epochs, batch_size)
+    train(data_dir, epochs, batch_size, dim_x, dim_y, lr)
+
+    test(data_dir, dim_x, dim_y)
 
     
