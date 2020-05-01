@@ -159,7 +159,14 @@ def create_model_tl(dim_x, dim_y, lr):
     model.summary()
     return model
 
+def read_test_labels():
+    df = pd.read_csv('../ISIC_2019_Training_GroundTruth.csv')
+    df_test = df[df.index % 101 == 0] #Selects every 101th row
+    df = df.drop(df.columns[[2, 3, 4, 5, 6, 7, 8, 9]], axis = 1)
+    return df
+
 def test(data_dir, dim_x,dim_y):
+    
     test_dir = os.path.join(data_dir, 'test')
     batch_size_test = 1
     test_gen = keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
@@ -171,32 +178,49 @@ def test(data_dir, dim_x,dim_y):
     )
 
     model = load_model('output/resnet50_224_best.h5')
-
     test_batches.reset()
-
     pred = model.predict_generator(test_batches, steps = len(test_batches), verbose = 1)
-
-    print("Predictions: " , str(pred))
-
     predicted_class_indices = np.argmax(pred, axis = 1)
 
-    print("Predicted class indices: ", str(predicted_class_indices))
-
+    # initialize plot
     f, ax = plt.subplots(5, 5, figsize = (15, 15))
+    
+    df_labels = read_test_labels()
+    df_result = pd.DataFrame(columns = ['image', 'labeled', 'predicted'])
+    image_count = len(test_batches.filenames)
+   
+    for i in range(0, image_count):
+        # read the image
+        image_file_path = test_batches.filenames[i]
+        image_name = os.path.splitext(os.path.basename(image_file_path))[0]
 
-    for i in range(0,25):
-        imgBGR = cv2.imread(os.path.join(test_dir, test_batches.filenames[i]))
+        predicted_class = predicted_class_indices[i]
+        labeled_class = int(df_labels.loc[df_labels['image'] == image_name, 'MEL'].to_numpy()[0])
+
+        df_result = df_result.append({'image': image_name, 'labeled': labeled_class,  'predicted':predicted_class}, ignore_index=True)
         
-        imgRGB = cv2.cvtColor(imgBGR, cv2.COLOR_BGR2RGB)
-        # a if condition else b
-        predicted_class = "Dog" if predicted_class_indices[i] else "Cat"
+        # create image comparison for the first 25 images
+        if i < 25:
+            imgBGR = cv2.imread(os.path.join(test_dir, image_file_path))
+            image_name = image_file_path.rsplit('.', 1)[0]
 
-        ax[i//5, i%5].imshow(imgRGB)
-        ax[i//5, i%5].axis('off')
-        ax[i//5, i%5].set_title("Predicted:{}".format(predicted_class))   
+            imgRGB = cv2.cvtColor(imgBGR, cv2.COLOR_BGR2RGB)
+            # a if condition else b
+            predicted_class_text = "Malignant" if predicted_class else "Benign"
+            
+            labeled_class_text = "Malignant" if labeled_class else "Benign" 
 
-    plt.savefig('predictions.png')
+            ax[i//5, i%5].imshow(imgRGB)
+            ax[i//5, i%5].axis('off')
+            ax[i//5, i%5].set_title("Predicted:{} \n Labeled:{}".format(predicted_class, labeled_class))   
 
+    plt.savefig('output/test_predictions.png')
+    df_result.to_csv('output/test_predictions.csv')
+    #calculate statistics
+    diff1 = df_result['predicted'] - df_result['labeled'] 
+    diff2 = df_result['labeled'] - df_result['predicted']
+    percentage_correctly_classified = (image_count + (diff1 * diff2).sum()) / image_count * 100
+    print("{0:.2f} percent of test images has been correctly classified".format(percentage_correctly_classified))
 
 def train(data_dir, epochs, batch_size, dim_x, dim_y, lr):
 
@@ -254,6 +278,7 @@ if __name__ == "__main__":
     parser.add_argument("--datapath", "-d", help="", type=str, default= '../data/')
     parser.add_argument("--batchsize", "-b", help="", type=int, default = 2)
     parser.add_argument("--epochs", "-e", help="", type=int, default = 2)
+    parser.add_argument("--test", "-t", help="Activates if a test run should be conducted.", type=bool, default= True)
 
     args = parser.parse_args()
     print("args: ", args)
@@ -270,7 +295,8 @@ if __name__ == "__main__":
     create_folder('output')
 
     train(data_dir, epochs, batch_size, dim_x, dim_y, lr)
-
-    test(data_dir, dim_x, dim_y)
+    
+    if args.test:
+        test(data_dir, dim_x, dim_y)
 
     
