@@ -1,5 +1,4 @@
 import numpy as np
-from PIL import Image
 import os
 import scipy.misc
 import glob
@@ -10,8 +9,6 @@ import random
 import keras_preprocessing.image
 from keras.preprocessing.image import save_img
 
-
-from PIL import Image
 import argparse
 
 #read_directory = "/Users/deinemudda/Desktop/ML/mole/mole_ml/raw_data/ben/"
